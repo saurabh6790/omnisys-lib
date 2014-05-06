@@ -1,0 +1,80 @@
+[
+ {
+  "creation": "2014-05-06 11:43:49", 
+  "docstatus": 0, 
+  "modified": "2014-05-06 12:34:33", 
+  "modified_by": "Administrator", 
+  "owner": "Administrator"
+ }, 
+ {
+  "autoname": "field:site_name", 
+  "doctype": "DocType", 
+  "document_type": "Master", 
+  "module": "Core", 
+  "name": "__common__"
+ }, 
+ {
+  "doctype": "DocField", 
+  "name": "__common__", 
+  "parent": "Site Details", 
+  "parentfield": "fields", 
+  "parenttype": "DocType", 
+  "permlevel": 0
+ }, 
+ {
+  "create": 1, 
+  "doctype": "DocPerm", 
+  "name": "__common__", 
+  "parent": "Site Details", 
+  "parentfield": "permissions", 
+  "parenttype": "DocType", 
+  "permlevel": 0, 
+  "read": 1, 
+  "write": 1
+ }, 
+ {
+  "doctype": "DocType", 
+  "name": "Site Details"
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "client_name", 
+  "fieldtype": "Data", 
+  "label": "Client Name"
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "site_name", 
+  "fieldtype": "Data", 
+  "label": "Site Name", 
+  "reqd": 1
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "database_name", 
+  "fieldtype": "Data", 
+  "label": "Database Name", 
+  "read_only": 1
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "database_password", 
+  "fieldtype": "Password", 
+  "label": "Database Password", 
+  "read_only": 1
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "is_active", 
+  "fieldtype": "Check", 
+  "label": "Is Active"
+ }, 
+ {
+  "doctype": "DocPerm", 
+  "role": "Administrator"
+ }, 
+ {
+  "doctype": "DocPerm", 
+  "role": "All"
+ }
+]
