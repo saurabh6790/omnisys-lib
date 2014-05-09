@@ -119,13 +119,25 @@ class LoginManager:
 		self.validate_hour()
 	
 	def authenticate(self, user=None, pwd=None):
-		if not (user and pwd):	
-			user, pwd = webnotes.form_dict.get('usr'), webnotes.form_dict.get('pwd')
-		if not (user and pwd):
-			self.fail('Incomplete login details')
-		
-		self.check_if_enabled(user)
-		self.user = self.check_password(user, pwd)
+		if self.is_active():
+			if not (user and pwd):	
+				user, pwd = webnotes.form_dict.get('usr'), webnotes.form_dict.get('pwd')
+			if not (user and pwd):
+				self.fail('Incomplete login details')
+			
+			self.check_if_enabled(user)
+			self.user = self.check_password(user, pwd)
+		else:
+			self.fail('Your Account has been deactivated ')
+
+	def is_active(self):
+		from webnotes.utils import cint
+		if webnotes.conn.get_value('Global Defaults', None, 'default_company'):
+			if cint(webnotes.conn.get_value('Global Defaults', None, 'is_active')) == 1:
+				return True
+			return False
+		else:
+			return True
 	
 	def check_if_enabled(self, user):
 		"""raise exception if user not enabled"""

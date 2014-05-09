@@ -68,6 +68,25 @@ class DocType:
 					1. <b>Upgrade to the unlimited users plan</b>, or<br /> \
 					2. <b>Disable one or more of your existing users and try again</b>""" \
 					% {'active_users': active_users}, raise_exception=1)
+
+		if self.doc.enabled and \
+				self.doc.name not in ["Administrator", "Guest"] and \
+				cstr(self.doc.user_type).strip() in ("", "System User"):
+			active_users = webnotes.conn.sql("""select count(*) from tabProfile
+				where ifnull(enabled, 0)=1 and docstatus<2
+				and ifnull(user_type, "System User") = "System User"
+				and name not in ('Administrator', 'Guest', %s)""", (self.doc.name,))[0][0]
+			max_users = webnotes.conn.get_value("Global Defaults", None, 'max_users')
+			webnotes.msgprint([max_users, active_users])
+			if max_users:
+				if active_users >= cint(max_users):
+					webnotes.msgprint("""
+					You already have <b>%(active_users)s</b> active users, \
+					which is the maximum number that you are currently allowed to add. <br /><br /> \
+					So, to add more users, you can:<br /> \
+					1. <b>Upgrade to the unlimited users plan</b>, or<br /> \
+					2. <b>Disable one or more of your existing users and try again</b>""" \
+					% {'active_users': active_users}, raise_exception=1)
 						
 	def add_system_manager_role(self):
 		# if adding system manager, do nothing

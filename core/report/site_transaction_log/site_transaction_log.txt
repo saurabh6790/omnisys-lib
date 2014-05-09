@@ -1,0 +1,22 @@
+[
+ {
+  "creation": "2014-05-09 09:02:34", 
+  "docstatus": 0, 
+  "modified": "2014-05-09 09:12:22", 
+  "modified_by": "Administrator", 
+  "owner": "Administrator"
+ }, 
+ {
+  "doctype": "Report", 
+  "is_standard": "Yes", 
+  "name": "__common__", 
+  "query": "select sl.site_name \"Site Name:Link/Site Details:120\",if(sl.is_active=1,'Yes','No') as \"Active Status:Date:100\", sl.date_time as \"Datetime::120\" from `tabSite Log` sl ", 
+  "ref_doctype": "Site Log", 
+  "report_name": "Site Transaction Log", 
+  "report_type": "Query Report"
+ }, 
+ {
+  "doctype": "Report", 
+  "name": "Site Transaction Log"
+ }
+]

@@ -15,16 +15,19 @@ class DocType:
 		self.doc, self.doclist = d, dl
 
 	def on_update(self):
-		webnotes.errprint("hiii")
+		# webnotes.errprint("hiii")
+		# return "in update"
 		if not (os.path.exists(os.path.join(get_base_path(), "sites"))):
 			self.make_primary_sites_settings()
+			
 		if not (os.path.exists(os.path.join(get_base_path(), "sites", self.doc.site_name))):
+			# webnotes.errprint("saurabh.p")
 			self.create_new_site()
-		self.update_global_defaults()
-		webnotes.msgprint("Updated")
+			# self.update_global_defaults()
+		# webnotes.msgprint("Updated")
 
 	def make_primary_sites_settings(self):
-		webnotes.errprint("tre")
+		# webnotes.errprint("tre")
 		exec_in_shell("""mkdir {path}/sites """.format(path=get_base_path()))
 
 		with open(os.path.join(get_base_path(), "conf.py"), "a") as conf_file:
@@ -55,8 +58,8 @@ class DocType:
 
 
 		exec_in_shell(""" ./lib/wnf.py --build """)
-
-		self.update_nginx_conf()
+		self.add_to_hosts()
+		# self.update_nginx_conf()
 
 	def update_nginx_conf(self):
 		nginx_conf = """
@@ -198,7 +201,7 @@ http {
 			""".format(server_root_password=root_password, path=get_base_path(), site_name= self.doc.site_name))
 
 	def create_new_site(self):
-		webnotes.errprint("root pwd")
+
 		root_password = webnotes.conn.get_value("Global Defaults", None, "mysql_root_password")
 
 		exec_in_shell("""{path}/lib/wnf.py --install {dbname} --root-password {root_password} --site {name}
@@ -211,7 +214,7 @@ http {
 		self.update_db_name_pwd()
 
 	def add_to_hosts(self):
-		webnotes.errprint("host")
+		# webnotes.errprint("host")
 		with open('/etc/hosts', 'rt') as f:
 			s = f.read() + '\n' + '127.0.0.1\t\t\t %s \n'%self.doc.site_name
 			with open('hosts', 'wt') as outf:
@@ -243,25 +246,69 @@ http {
 @webnotes.whitelist(allow_guest=True)
 def get_installation_note(site_name ,_type='POST'):
 	# from webnotes.model.doc import Document
-	webnotes.bean({
+	import webnotes
+	# return "hi"
+	site = webnotes.bean({
 			"doctype":"Site Details",
 			"site_name": site_name,
 			"is_active":"1"
 		}).insert()
+	webnotes.conn.sql("commit")
+	if site:
+		return {"status":"200"}
 	# http://saurabh.erp.com:8000/server.py?cmd=core.doctype.site_details.site_details.get_installation_note&site_name=rohit3.erp.com&_type='POST'
 
 @webnotes.whitelist(allow_guest=True)
 def activate_deactivate(site_name , is_active, _type='POST'):
+	# return "hi"
+	from webnotes.model.doc import Document
+	from webnotes.utils import now
 	site_details = webnotes.conn.sql("select database_name, database_password from `tabSite Details` where name = '%s'"%(site_name))
+	# return site_details
 	if site_details:
 		import MySQLdb
-		myDB = MySQLdb.connect(user="%s"%site_details[0][0], passwd="%s"%site_details[0][1], db="%s"%site_details[0][0])
-		cHandler = myDB.cursor()
-		cHandler.execute("update  tabSingles set value = '%s' where field='is_active' and doctype = 'Global Defaults'"%is_active)
-		cHandler.execute("commit")
+		try:
+			myDB = MySQLdb.connect(user="%s"%site_details[0][0], passwd="%s"%site_details[0][1], db="%s"%site_details[0][0])
+			cHandler = myDB.cursor()
+			cHandler.execute("update  tabSingles set value = '%s' where field='is_active' and doctype = 'Global Defaults'"%is_active)
+			cHandler.execute("commit")
+			myDB.close()
+
+			d = Document("Site Log")
+			d.site_name =site_name
+			d.is_active = is_active
+			d.date_time = now()
+			d.save()
+			webnotes.conn.sql("commit")
+			return {"status":"200", 'name':d.name}
+
+		except Exception as inst: 
+			return {"status":"417", "error":inst}
+	else:
+		return{"status":"404", "Error":"Site Not Fount"}
 
 @webnotes.whitelist(allow_guest=True)
-def get_installation_note1(_type='POST'):
-	from httplib2 import Http
-	h = Http()
-	webnotes.errprint([h.request])
+def update_user_limit(site_name , max_users, _type='POST'):
+	from webnotes.model.doc import Document
+	from webnotes.utils import now
+	site_details = webnotes.conn.sql("select database_name, database_password from `tabSite Details` where name = '%s'"%(site_name))
+	# return site_details
+	if site_details:
+		import MySQLdb
+		try:
+			myDB = MySQLdb.connect(user="%s"%site_details[0][0], passwd="%s"%site_details[0][1], db="%s"%site_details[0][0])
+			cHandler = myDB.cursor()
+			cHandler.execute("update  tabSingles set value = '%s' where field='max_users' and doctype = 'Global Defaults'"%max_users)
+			cHandler.execute("commit")
+			myDB.close()
+
+			d = Document("Site Log")
+			d.site_name =site_name
+			d.date_time = now()
+			d.max_users = max_users
+			d.save()
+			webnotes.conn.sql("commit")
+			return {"status":"200", 'name':d.name}
+
+		except Exception as inst: 
+			return {"status":"417", "error":inst}
