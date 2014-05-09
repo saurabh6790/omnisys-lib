@@ -231,7 +231,7 @@ http {
 
 		db_name = lines[1].split(':')[1].replace('"','')[:-3]
 		db_pwd = lines[2].split(':')[1].replace('"','')[:-1]
-		webnotes.conn.sql("update `tabSite Details` set database_name = LTRIM('%s'), database_password = LTRIM('%s') where name = '%s' "%(db_name, db_pwd, self.doc.name), debug=1)
+		webnotes.conn.sql("update `tabSite Details` set database_name = LTRIM('%s'), database_password = LTRIM('%s') where name = '%s' "%(db_name, db_pwd, self.doc.name))
 		webnotes.conn.sql("commit")
 
 	def update_global_defaults(self):
