@@ -276,6 +276,7 @@ def activate_deactivate(site_name , is_active, _type='POST'):
 
 			d = Document("Site Log")
 			d.site_name =site_name
+			d.purpose = 'Activation/Deactivation'
 			d.is_active = is_active
 			d.date_time = now()
 			d.save()
@@ -305,6 +306,7 @@ def update_user_limit(site_name , max_users, _type='POST'):
 			d = Document("Site Log")
 			d.site_name =site_name
 			d.date_time = now()
+			d.purpose = 'Max User Setting'
 			d.max_users = max_users
 			d.save()
 			webnotes.conn.sql("commit")

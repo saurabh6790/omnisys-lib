@@ -20,7 +20,7 @@ class Installer:
 		make_conf(db_name, site=site, site_config=site_config)
 		self.site = site
 		
-		if root_password:
+		if isinstance(root_password, list):
 			root_password = root_password[0]
 		
 		self.make_connection(root_login, root_password)

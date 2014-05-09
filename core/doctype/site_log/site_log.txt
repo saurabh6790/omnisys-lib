@@ -2,7 +2,7 @@
  {
   "creation": "2014-05-09 08:34:03", 
   "docstatus": 0, 
-  "modified": "2014-05-09 11:24:14", 
+  "modified": "2014-05-09 22:43:49", 
   "modified_by": "Administrator", 
   "owner": "Administrator"
  }, 
@@ -47,15 +47,22 @@
  }, 
  {
   "doctype": "DocField", 
-  "fieldname": "is_active", 
-  "fieldtype": "Check", 
-  "label": "Is Active"
- }, 
- {
-  "doctype": "DocField", 
   "fieldname": "date_time", 
   "fieldtype": "Datetime", 
   "label": "Date Time"
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "purpose", 
+  "fieldtype": "Select", 
+  "label": "Purpose", 
+  "options": "\nMax User Setting\nActivation/Deactivation"
+ }, 
+ {
+  "doctype": "DocField", 
+  "fieldname": "is_active", 
+  "fieldtype": "Check", 
+  "label": "Is Active"
  }, 
  {
   "doctype": "DocField", 
