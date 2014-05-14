@@ -314,3 +314,24 @@ def update_user_limit(site_name , max_users, _type='POST'):
 
 		except Exception as inst: 
 			return {"status":"417", "error":inst}
+
+@webnotes.whitelist(allow_guest=True)
+def terminate_tenant(site_name):
+	delete_db_and_user(site_name)
+	delete_site_folder(site_name)
+	delete_master_record(site_name)
+	return {"status":"200"}
+
+def delete_db_and_user(site_name):
+	root_password = webnotes.conn.get_value("Global Defaults", None, "mysql_root_password")
+	exec_in_shell("mysql -u root -p'{root_password}' -e'drop database {dbname}'".format(dbname=site_name.replace('.', '_'), root_password=root_password))
+
+	exec_in_shell("mysql -u root -p'{root_password}' -e'drop user {dbname}@localhost'".format(dbname=site_name.replace('.', '_'), root_password=root_password))
+
+def delete_site_folder(site_name):
+	exec_in_shell("""rm -r {path}/sites/{site_name} """.format(site_name=site_name, path=get_base_path()))
+
+def delete_master_record(site_name):
+	if webnotes.conn.get_value("Site Details", site_name, 'name'):
+		webnotes.conn.sql("delete from `tabSite Details` where name = '%s'"%(site_name))
+		webnotes.conn.sql("commit")
